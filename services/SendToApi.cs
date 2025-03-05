@@ -15,12 +15,16 @@ namespace FileWatcherService.services
         private readonly string _endpoint; 
         private readonly string _apiKey;
 
-        public SendToApi(IConfiguration configuration){
+        public SendToApi(IConfiguration configuration, IHttpClientFactory httpClientFactory){
             _configuration = configuration;
-            _httpClient = new HttpClient();
+            _httpClient =  httpClientFactory.CreateClient();
             _httpClient.DefaultRequestHeaders.Add("Content-Type", "application/json"); //set up default headers
             _endpoint = _configuration["ApiEndpoint"];
             _apiKey = _configuration["ApiKey"];
+
+            if (!string.IsNullOrEmpty(_apiKey)){
+                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
+            }
         }
 
         public async Task PostAsJsonAsync(string JsonPath){

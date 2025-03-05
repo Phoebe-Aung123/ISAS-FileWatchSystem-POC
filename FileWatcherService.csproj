@@ -11,6 +11,8 @@
     <PackageReference Include="ChoETL" Version="1.2.1.68" />
     <PackageReference Include="ChoETL.JSON.NETStandard" Version="1.2.1.67" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0-preview.1.25080.5" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.1.25080.5" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.0-preview.1.25080.5" />
   </ItemGroup>
 </Project>

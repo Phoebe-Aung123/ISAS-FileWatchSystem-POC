@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices.Marshalling;
 using System.Security.Cryptography;
 using ChoETL;
+using FileWatcherService.services;
 
 namespace FileWatcherService;
 
@@ -8,6 +9,7 @@ public class Worker : IHostedService
 {
     private readonly ILogger<Worker> _logger;
     private FileSystemWatcher watcher; 
+    private readonly ISendToApi _sendToApi;
     private FileSystemWatcher processWatcher; 
     private readonly string rootDirectory = "/Users/phoebeaung/Documents/IASAS";
     private readonly string sourceDirectory = "/Users/phoebeaung/Documents/IASAS/FileWatcherPOC/InputFolder";
@@ -16,9 +18,10 @@ public class Worker : IHostedService
     private readonly string archiveDirectory = "/Users/phoebeaung/Documents/IASAS/FileWatcherPOC/ArchiveFolder";
     
 
-    public Worker(ILogger<Worker> logger)
+    public Worker(ILogger<Worker> logger, ISendToApi sentToApi)
     {
         _logger = logger;
+        _sendToApi = sentToApi; 
     }
 
     public void onChanged(object source, FileSystemEventArgs e){
@@ -158,10 +161,6 @@ public class Worker : IHostedService
             using (var jw = new ChoJSONWriter(newJson)){
                 using (var cr = new ChoCSVReader(e.FullPath).WithFirstLineHeader()){
                     jw.Write(cr);
-                    // object rec = null;
-
-                    // while ((rec = cr.Read()) != null)
-                    // Console.WriteLine(rec.ToStringEx());
                 }
             }
             Console.WriteLine("The file {0} has been successfully converted to JSON. ", e.Name);
