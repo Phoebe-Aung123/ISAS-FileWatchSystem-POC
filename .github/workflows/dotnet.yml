@@ -24,3 +24,24 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+    # - names: test with dotnet
+    #  run: dotnet test --no restore ...
+    # - name: upload dotnet-results 
+    #  uses: actions/upload-artifact@v4
+  # deploy: 
+  #   runs-on: windows-latest
+  #   needs: build
+  #   environment:
+  #     name: 'production'
+  #     url: . 
+
+  #   steps: 
+  #     - name: Downlaod artifact from build job
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: .net-app
+
+  #     - name: Deploy to ?
+  #       id:
+  #       uses:
+  #         with:
