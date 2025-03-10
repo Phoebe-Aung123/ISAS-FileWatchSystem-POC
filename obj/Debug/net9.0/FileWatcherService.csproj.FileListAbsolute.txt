@@ -61,3 +61,6 @@
 /Users/phoebeaung/Documents/IASAS/FileWatcherSystem/FileWatcherService/bin/Debug/net9.0/runtimes/win/lib/netstandard2.0/System.Security.Cryptography.ProtectedData.dll
 /Users/phoebeaung/Documents/IASAS/FileWatcherSystem/FileWatcherService/bin/Debug/net9.0/sample.json
 /Users/phoebeaung/Documents/IASAS/FileWatcherSystem/FileWatcherService/bin/Debug/net9.0/System.IO.FileSystemEventArgssample.json
+/Users/phoebeaung/Documents/IASAS/FileWatcherSystem/FileWatcherService/bin/Debug/net9.0/Microsoft.Extensions.Http.dll
+/Users/phoebeaung/Documents/IASAS/FileWatcherSystem/FileWatcherService/bin/Debug/net9.0/System.Diagnostics.DiagnosticSource.dll
+/Users/phoebeaung/Documents/IASAS/FileWatcherSystem/FileWatcherService/obj/Debug/net9.0/FileWatcherService.sourcelink.json

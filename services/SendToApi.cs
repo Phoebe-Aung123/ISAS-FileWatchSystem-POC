@@ -18,7 +18,6 @@ namespace FileWatcherService.services
         public SendToApi(IConfiguration configuration, IHttpClientFactory httpClientFactory){
             _configuration = configuration;
             _httpClient =  httpClientFactory.CreateClient();
-            _httpClient.DefaultRequestHeaders.Add("Content-Type", "application/json"); //set up default headers
             _endpoint = _configuration["ApiEndpoint"];
             _apiKey = _configuration["ApiKey"];
 

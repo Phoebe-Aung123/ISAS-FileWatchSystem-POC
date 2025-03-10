@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.Marshalling;
 using System.Security.Cryptography;
 using ChoETL;
@@ -11,18 +12,58 @@ public class Worker : IHostedService
     private FileSystemWatcher watcher; 
     private readonly ISendToApi _sendToApi;
     private FileSystemWatcher processWatcher; 
-    private readonly string rootDirectory = "/Users/phoebeaung/Documents/IASAS";
-    private readonly string sourceDirectory = "/Users/phoebeaung/Documents/IASAS/FileWatcherPOC/InputFolder";
-    private readonly string errorDirectory = "/Users/phoebeaung/Documents/IASAS/FileWatcherPOC/ErrorFolder";
-    private readonly string processingDirectory = "/Users/phoebeaung/Documents/IASAS/FileWatcherPOC/ProcessingFolder";
-    private readonly string archiveDirectory = "/Users/phoebeaung/Documents/IASAS/FileWatcherPOC/ArchiveFolder";
+    private IConfiguration _configuration;
+
+    private readonly string _rootDirectory;
+    private readonly string _sourceDirectory;
+    private readonly string _errorDirectory; 
+    private readonly string _processingDirectory;
+    private readonly string _archiveDirectory; 
+    private readonly int _dataProviderId; 
+
+
+    // private readonly string rootDirectory = "/Users/phoebeaung/Documents/IASAS";
+    // private readonly string sourceDirectory = "/Users/phoebeaung/Documents/IASAS/FileWatcherPOC/InputFolder";
+    // private readonly string errorDirectory = "/Users/phoebeaung/Documents/IASAS/FileWatcherPOC/ErrorFolder";
+    // private readonly string processingDirectory = "/Users/phoebeaung/Documents/IASAS/FileWatcherPOC/ProcessingFolder";
+    // private readonly string archiveDirectory = "/Users/phoebeaung/Documents/IASAS/FileWatcherPOC/ArchiveFolder";
     
 
-    public Worker(ILogger<Worker> logger, ISendToApi sentToApi)
+    public Worker(ILogger<Worker> logger, ISendToApi sentToApi, IConfiguration configuration)
     {
         _logger = logger;
         _sendToApi = sentToApi; 
-    }
+        _configuration = configuration;
+
+        var directorySettings = _configuration.GetSection("ClientSettings:DirectorySettings");
+        _rootDirectory = directorySettings["RootDirectory"];
+        _sourceDirectory = directorySettings["SourceDirectory"];
+        _errorDirectory = directorySettings["ErrorDirectory"];
+        _processingDirectory = directorySettings["ProcessingDirectory"];
+        _archiveDirectory = directorySettings["ArchiveDirectory"];
+
+        //validate directory paths
+    //     if (string.IsNullOrEmpty(_rootDirectory)){
+    //         _logger.LogError("The root directory is not configured");
+    //         throw new ArgumentException("Root directory is not configured.");
+    //     }
+    //      if (string.IsNullOrEmpty(_sourceDirectory)){
+    //         _logger.LogError("The source directory is not configured");
+    //         throw new ArgumentException("Source directory is not configured.");
+    //     }
+    //      if (string.IsNullOrEmpty(_errorDirectory)){
+    //         _logger.LogError("The error directory is not configured");
+    //         throw new ArgumentException("Error directory is not configured.");
+    //     }
+    //      if (string.IsNullOrEmpty(_processingDirectory)){
+    //         _logger.LogError("The processing directory is not configured");
+    //         throw new ArgumentException("Processing directory is not configured.");
+    //     }
+    //      if (string.IsNullOrEmpty(_archiveDirectory)){
+    //         _logger.LogError("The archive directory is not configured");
+    //         throw new ArgumentException("Archive directory is not configured.");
+    //     }
+     }
 
     public void onChanged(object source, FileSystemEventArgs e){
 
@@ -40,18 +81,23 @@ public class Worker : IHostedService
                 if (isCsv(extension)){
                 //rename the file according to the data provider
                     string renamedFile = renameFile(e, 2);
-                    moveFolder(Path.Combine(getDirectory(e), renamedFile), processingDirectory);
+                    moveFolder(Path.Combine(getDirectory(e), renamedFile), _processingDirectory);
                 }
                 else {
                     Console.WriteLine(e.FullPath);
-                    moveFolder(e.FullPath, errorDirectory);
+                    moveFolder(e.FullPath, _errorDirectory);
                 }
         }
             else if (source == processWatcher){
                 if(e.Name.EndsWith(".csv")){
                     try {
                         processWatcher.EnableRaisingEvents = false;
-                        Task.Run(() => convertToJson(e));         
+                        Task.Run(async () => {
+                            convertToJson(e);
+                            await Task.Delay(200);
+                            moveFolder(e.FullPath, _archiveDirectory);}
+                            );  
+                       
                         processWatcher.EnableRaisingEvents = true;
                     }
                     catch(Exception ex){
@@ -100,7 +146,7 @@ public class Worker : IHostedService
             string oldPath = e.FullPath;
 
             //get the new path with the newName
-            string newPath = Path.Combine(sourceDirectory, newName);
+            string newPath = Path.Combine(_sourceDirectory, newName);
 
             //rename the file with the newName
             File.Move(oldPath, newPath);
@@ -220,9 +266,9 @@ public class Worker : IHostedService
         watcher = new FileSystemWatcher();
         processWatcher = new FileSystemWatcher();
 
-        watcher.Path = sourceDirectory;
+        watcher.Path = _sourceDirectory;
 
-        processWatcher.Path = processingDirectory; 
+        processWatcher.Path = _processingDirectory; 
 
         _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
             //}
