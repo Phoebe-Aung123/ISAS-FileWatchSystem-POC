@@ -13,7 +13,6 @@ public class Worker : IHostedService
     private readonly ISendToApi _sendToApi;
     private FileSystemWatcher processWatcher; 
     private IConfiguration _configuration;
-
     private readonly string _rootDirectory;
     private readonly string _sourceDirectory;
     private readonly string _errorDirectory; 
@@ -42,27 +41,6 @@ public class Worker : IHostedService
         _processingDirectory = directorySettings["ProcessingDirectory"];
         _archiveDirectory = directorySettings["ArchiveDirectory"];
 
-        //validate directory paths
-    //     if (string.IsNullOrEmpty(_rootDirectory)){
-    //         _logger.LogError("The root directory is not configured");
-    //         throw new ArgumentException("Root directory is not configured.");
-    //     }
-    //      if (string.IsNullOrEmpty(_sourceDirectory)){
-    //         _logger.LogError("The source directory is not configured");
-    //         throw new ArgumentException("Source directory is not configured.");
-    //     }
-    //      if (string.IsNullOrEmpty(_errorDirectory)){
-    //         _logger.LogError("The error directory is not configured");
-    //         throw new ArgumentException("Error directory is not configured.");
-    //     }
-    //      if (string.IsNullOrEmpty(_processingDirectory)){
-    //         _logger.LogError("The processing directory is not configured");
-    //         throw new ArgumentException("Processing directory is not configured.");
-    //     }
-    //      if (string.IsNullOrEmpty(_archiveDirectory)){
-    //         _logger.LogError("The archive directory is not configured");
-    //         throw new ArgumentException("Archive directory is not configured.");
-    //     }
      }
 
     public void onChanged(object source, FileSystemEventArgs e){
