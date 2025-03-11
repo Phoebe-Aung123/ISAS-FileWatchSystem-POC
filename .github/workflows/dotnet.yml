@@ -8,6 +8,10 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  SERVER_APP_NAME: "filewatch-dev"
+  
+
 jobs:
   build:
 
@@ -19,20 +23,34 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0
+        
     - name: Restore dependencies
       run: dotnet restore
+      
     - name: Build
       run: dotnet build --no-restore
-    # - names: test with dotnet
+    
+    
+    - name: Publish
+      run: dotnet publish
+
+     # - names: test with dotnet
     #  run: dotnet test --no restore ...
     # - name: upload dotnet-results 
     #  uses: actions/upload-artifact@v4
-  # deploy to UAT: 
-  #   runs-on: windows-latest
-  #   needs: build
-  #   environment:
-  #     name: 'production'
-  #     url: . 
+
+    
+  # deploy: 
+  #    runs-on: windows-latest
+  #    needs: build
+
+  #    steps: 
+  #    - name: Deploy to Azure nonprod
+  #    - uses: azure/webapps-deploy@v2
+  #      with:
+  #        app-name:  ${{env.SERVER-APP-NAME}}
+  #        publish_profle: ${{secrets.SERVER-PUBLISH-PROFILE}}
+  #        package: ./publish
 
   #   steps: 
   #     - name: Downlaod artifact from build job
